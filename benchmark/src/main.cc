@@ -1,15 +1,15 @@
 /**
  * @file main.cc
- * Implement an integer set in c++
+ * Implement an integer set in c++ using various data structures
  */
 
 #include <iostream>
 #include <string>
 #include <unistd.h>
-
 #include "Set.h"
 #include "List.h"
-#include "OrderedVector.h"
+#include "SortedVector.h"
+#include "UnsortedVector.h"
 
 using namespace std;
 
@@ -53,7 +53,7 @@ void parse_args(int argc, char **argv, arg_t &args) {
                 args.key = atoi(optarg);
                 break;
             default:
-                cout << "One or more parameters invalid!";
+                cout << "One or more parameters invalid! Try again!";
                 break;
         }
     }
@@ -71,18 +71,20 @@ int main(int argc, char **argv) {
         l.list(args.iterations, args.key, args.read_only_ratio);
     }
     else if (args.data_structure == "sorted_vector") {
-        Vector v;
+        SortedVector v;
+        v.vector(args.iterations, args.key, args.read_only_ratio);
+    }
+    else if (args.data_structure == "unsorted_vector") {
+        UnsortedVector v;
         v.vector(args.iterations, args.key, args.read_only_ratio);
     }
     else {
-        cout << "Error!";
+        cout << "One or more parameters invalid! Try again!";
     }
 }
 
 
 /**
- * Implement standard implementation for sets, lists, ordered and unordered vector
- * Not time complexities and explanations about each data structure
  * experiment with binary search in sets: e.g. binary_search(arr.begin(), arr.end(), 15)
  * binary_search doesn’t work well with set/multiset iterators, because they don’t allow random access
  * experiment with unordered set in sets

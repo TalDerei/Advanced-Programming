@@ -1,9 +1,6 @@
 /**
- * @file orderedVector.cc
- * Ordered Vectors are dynamic arrays with the ability to resize itself automatically
- * when elements are inserted and deleted. Vector elements are placed in contiguous 
- * storage so that they can be accessed and traversed using iterators. And unlike sets, 
- * vector elements can be duplicates. 
+ * @file UnsortedVector.cc
+ * Unsorted represetation of a vector
  * 
  * Time Complexity:
  * Insertion Time: O(1)
@@ -17,17 +14,17 @@
 #include <chrono>
 #include <algorithm>
 
-#include "OrderedVector.h"
+#include "UnsortedVector.h"
 
 using namespace std;
 
 /* Constructor for creating Vector objects */
-void Vector::vector() {
+void UnsortedVector::vector() {
 
 }
 
 /* Vector interface logic */
-void Vector::vector(int iterations, int key, int read_only_ratio) {
+void UnsortedVector::vector(int iterations, int key, int read_only_ratio) {
     /* Start execution time */
     auto start = chrono::high_resolution_clock::now();
 
@@ -40,8 +37,8 @@ void Vector::vector(int iterations, int key, int read_only_ratio) {
     /* Populate vector with key values */
     init_vector(myvector, iterations);
 
-    srand(time(0));
     /* Randomly switch between different vector operations */
+    srand(time(0));
     for (int counter = 0; counter < iterations; counter++) {
         long opt = rand() % 100;
         long rand_key = rand() % key; 
@@ -73,7 +70,7 @@ void Vector::vector(int iterations, int key, int read_only_ratio) {
 }
 
 /* Populate vector to 50% of max capacity */
-void Vector::init_vector(std::vector<int> &vector, int iterations) {
+void UnsortedVector::init_vector(std::vector<int> &vector, int iterations) {
     srand(time(0));
     for (int i = 0; i < iterations / 2; i++) {
         vector.push_back(rand() % 100);
@@ -81,36 +78,24 @@ void Vector::init_vector(std::vector<int> &vector, int iterations) {
 }
 
 /* Insert new key */
-void Vector::insert_key(std::vector<int> &vector, int key) {
-    std::vector<int>::iterator key_value = std::find(vector.begin(), vector.end(), key);
-    if (key_value == vector.end()) {
-        vector.push_back(rand() % 100);
-        cout << "Inserted key!\n";
-    }
-    else {
-        cout << "Insert failed! Key " << key << " already exists!\n";
-    }
+void UnsortedVector::insert_key(std::vector<int> &vector, int key) {
+    vector.push_back(key);
+    cout << "Inserted key!\n";
 }
 
 /* Remove existing key */
-void Vector::remove_key(std::vector<int> &vector, int key) {
-    std::vector<int>::iterator key_value = std::find(vector.begin(), vector.end(), key);
-    if (key_value == vector.end()) {
-        cout << "Remove failed! Key " << key << " NOT found!\n";
-    }
-    else {
-        vector.erase(key_value);
-        cout << "Removed key!\n";
-    }
+void UnsortedVector::remove_key(std::vector<int> &vector, int key) {
+    vector.erase(vector.begin() + key);
+    cout << "Removed key!\n";
 }
 
 /* Look up if key exists */
-void Vector::lookup_key(std::vector<int> &vector, int key) {
+void UnsortedVector::lookup_key(std::vector<int> &vector, int key) {
     std::vector<int>::iterator key_value = std::find(vector.begin(), vector.end(), key);
     if (key_value == vector.end()) {
         cout << "Key " << key << " NOT found!\n";
     }
     else {
-        cout << "Key " << key << " found in the set!\n";
+        cout << "Key " << key << " found in the vector!\n";
     }
 }

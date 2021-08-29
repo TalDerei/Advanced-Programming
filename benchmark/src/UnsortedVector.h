@@ -1,11 +1,11 @@
-/* Header file for List.cc */
+/* Header file for UnsortedVector.cc */
 
-#ifndef VECTOR_DEF
-#define VECTOR_DEF
+#ifndef UNORDEREDVECTOR_DEF
+#define UNORDEREDVECTOR_DEF
 
 #include <vector>
 
-class Vector {
+class UnsortedVector {
     public:
         void vector();
         void vector(int, int, int);

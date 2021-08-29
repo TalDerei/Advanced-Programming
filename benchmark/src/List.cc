@@ -15,7 +15,6 @@
 
 #include <iostream>
 #include <stdlib.h>
-#include <list>
 #include <string>
 #include <chrono>
 #include <algorithm>
@@ -43,8 +42,8 @@ void List::list(int iterations, int key, int read_only_ratio) {
     /* Populate list with key values */
     init_list(mylist, iterations);
 
-    srand(time(0));
     /* Randomly switch between different list operations */
+    srand(time(0));
     for (int counter = 0; counter < iterations; counter++) {
         long opt = rand() % 100;
         long rand_key = rand() % key; 
@@ -85,26 +84,14 @@ void List::init_list(std::list<int> &list, int iterations) {
 
 /* Insert new key */
 void List::insert_key(std::list<int> &list, int key) {
-    std::list<int>::iterator key_value = std::find(list.begin(), list.end(), key);
-    if (key_value == list.end()) {
-        list.push_back(rand() % 100);
-        cout << "Inserted key!\n";
-    }
-    else {
-        cout << "Insert failed! Key " << key << " already exists!\n";
-    }
+    list.push_back(key);
+    cout << "Inserted key!\n";
 }
 
 /* Remove existing key */
 void List::remove_key(std::list<int> &list, int key) {
-    std::list<int>::iterator key_value = std::find(list.begin(), list.end(), key);
-    if (key_value == list.end()) {
-        cout << "Remove failed! Key " << key << " NOT found!\n";
-    }
-    else {
-        list.erase(key_value);
-        cout << "Removed key!\n";
-    }
+    list.remove(key);
+    cout << "Removed key!\n";
 }
 
 /* Look up if key exists */
@@ -114,6 +101,6 @@ void List::lookup_key(std::list<int> &list, int key) {
         cout << "Key " << key << " NOT found!\n";
     }
     else {
-        cout << "Key " << key << " found in the set!\n";
+        cout << "Key " << key << " found in the list!\n";
     }
 }

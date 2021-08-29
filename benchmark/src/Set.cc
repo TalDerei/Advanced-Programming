@@ -16,7 +16,6 @@
 
 #include <iostream>
 #include <stdlib.h>
-#include <set>
 #include <string>
 #include <chrono>
 
@@ -70,7 +69,6 @@ void Set::set(int iterations, int key, int read_only_ratio) {
     /* print elements of set */
     for (it = myset.begin(); it != myset.end(); ++it) {
         cout << *it << " "; 
-        cout << "size of set is: " << myset.size();
     }
     cout << "\n";
 }
