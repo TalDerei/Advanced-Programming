@@ -1,14 +1,24 @@
 /**
  * @file set.cc
- * 'set <data_type> s' is an associative container of the c++ std library
+ * Sets are associative containers of the c++ std library
  * which stores elements in a sorted manner. All the elements of a set are 
  * unique and cannot be modified, but can be inserted and/or removed. 
- * Sets are typically implemented as binary seaerch trees (BST).
+ * Sets are typically implemented as balanced binary seaerch trees (BST),
+ * like red-black trees. 
+ * 
+ * Time Complexity:
+ * Search Time: O(log n)
+ * Insertion Time: O(log n) + rebalancing
+ * Deletiion Time: O(log n) + rebalancing
+ * 
+ * Unordered Sets: O(1) averages, O(n) worse-case for resizing (implemented as hash table)
  */
+
 #include <iostream>
 #include <stdlib.h>
 #include <set>
 #include <string>
+#include <chrono>
 
 #include "Set.h"
 
@@ -20,6 +30,9 @@ void Set::set() {
 
 /* Set interface logic */
 void Set::set(int iterations, int key, int read_only_ratio) {
+    /* Start execution time */
+    auto start = chrono::high_resolution_clock::now();
+
     /* Initialize empty set of ints */
     std::set<int> myset;
 
@@ -45,10 +58,19 @@ void Set::set(int iterations, int key, int read_only_ratio) {
             remove_key(myset, rand_key);
         }
     }
+    
+    /* finish execution time */
+    auto finish = chrono::high_resolution_clock::now();
+
+    /* duration represents time interval */
+    chrono::duration<double> elapse_time = finish - start;
+
+    cout << "Execution time elapsed is: " << elapse_time.count() << "\n";
 
     /* print elements of set */
     for (it = myset.begin(); it != myset.end(); ++it) {
-        cout << *it << " ";
+        cout << *it << " "; 
+        cout << "size of set is: " << myset.size();
     }
     cout << "\n";
 }

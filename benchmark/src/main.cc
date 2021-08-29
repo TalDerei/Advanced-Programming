@@ -9,6 +9,7 @@
 
 #include "Set.h"
 #include "List.h"
+#include "OrderedVector.h"
 
 using namespace std;
 
@@ -69,7 +70,22 @@ int main(int argc, char **argv) {
         List l;
         l.list(args.iterations, args.key, args.read_only_ratio);
     }
+    else if (args.data_structure == "sorted_vector") {
+        Vector v;
+        v.vector(args.iterations, args.key, args.read_only_ratio);
+    }
     else {
         cout << "Error!";
     }
 }
+
+
+/**
+ * Implement standard implementation for sets, lists, ordered and unordered vector
+ * Not time complexities and explanations about each data structure
+ * experiment with binary search in sets: e.g. binary_search(arr.begin(), arr.end(), 15)
+ * binary_search doesn’t work well with set/multiset iterators, because they don’t allow random access
+ * experiment with unordered set in sets
+ * sort vector and then run binary search vs unsorted vector and search (O(n))
+ * run tests and record data
+ */
