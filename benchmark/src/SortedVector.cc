@@ -99,6 +99,11 @@ void SortedVector::remove_key(std::vector<int> &vector, int key) {
 /* Look up if key exists */
 void SortedVector::lookup_key(std::vector<int> &vector, int key) {
     std::vector<int>::iterator key_value = std::find(vector.begin(), vector.end(), key);
+    // look into implementing lower_bound() function which is binary search
+    // std::vector<int>::iterator it = std::lower_bound(v.begin(), v.end(), 42);
+    // if (it != v.end() && *it == 42) {
+    //     // we found the element!
+    // }
     if (key_value == vector.end()) {
         cout << "Key " << key << " NOT found!\n";
     }

@@ -12,34 +12,33 @@
  * Deletiion Time: O(log n) + rebalancing
  * 
  * Unordered Sets: O(1) averages, O(n) worse-case for resizing (implemented as hash table)
+ * 
+ * binary_search() doesn’t work well with set/multiset iterators, because they don’t allow random access.
+ * find() tends to work better as a targeted solution for sets
  */
 
 #include <iostream>
 #include <stdlib.h>
 #include <string>
 #include <chrono>
+#include <bits/stdc++.h>
 
 #include "Set.h"
 
 using namespace std;
 
-/* Constructor for creating Set objects */
-void Set::set() {
-}
-
 /* Set interface logic */
 void Set::set(int iterations, int key, int read_only_ratio) {
-    /* Start execution time */
-    auto start = chrono::high_resolution_clock::now();
-
-    /* Initialize empty set of ints */
-    std::set<int> myset;
-
     /* Set iterator */
     std::set<int>::iterator it;
 
     /* Populate set with key values */
-    init_set(myset, iterations);
+    init_set(myset, key);
+
+    cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!size of set is: " << myset.size();
+
+    /* Start execution time */
+    auto start = chrono::high_resolution_clock::now();
 
     srand(time(0));
     /* Randomly switch between different set operations */
@@ -48,8 +47,11 @@ void Set::set(int iterations, int key, int read_only_ratio) {
         long rand_key = rand() % key; 
         cout << "opt is: " << opt << "\n";
         if (opt <= read_only_ratio) {
-            lookup_key(myset, rand_key);
+            lookup_key_linear(myset, rand_key);
         } 
+        // if (opt <= read_only_ratio) {
+        //     lookup_key_binary(myset, rand_key);
+        // } 
         else if (opt > read_only_ratio && opt <= (100-read_only_ratio)/2) {
             insert_key(myset, rand_key);
         }
@@ -58,26 +60,35 @@ void Set::set(int iterations, int key, int read_only_ratio) {
         }
     }
     
-    /* finish execution time */
+    /* Finish execution time */
     auto finish = chrono::high_resolution_clock::now();
 
-    /* duration represents time interval */
+    /* Duration represents time interval */
     chrono::duration<double> elapse_time = finish - start;
 
-    cout << "Execution time elapsed is: " << elapse_time.count() << "\n";
-
-    /* print elements of set */
+    /* Print elements of set */
     for (it = myset.begin(); it != myset.end(); ++it) {
-        cout << *it << " "; 
+        cout << *it << " " << endl;
     }
-    cout << "\n";
+
+    cout << "Execution time elapsed is: " << elapse_time.count() << endl;
+
+    cout << "size of set is: " << myset.size();
 }
 
 /* Populate set to 50% of max capacity */
-void Set::init_set(std::set<int> &set, int iterations) {
+void Set::init_set(std::set<int> &set, int key) {
+    int counter = 0;
     srand(time(0));
-    for (int i = 0; i < iterations / 2; i++) {
-        set.insert(rand() % 100);
+    while (counter != key / 2) {
+        int key_insert = rand() % key;
+        if (!lookup_key_linear(set, key_insert)) {
+            set.insert(key_insert);
+            counter++;
+        }
+        else {
+            continue;
+        }
     }
 }
 
@@ -86,10 +97,10 @@ void Set::insert_key(std::set<int> &set, int key) {
     auto key_value = set.find(key);
     if (key_value == set.end()) {
         set.insert(key);
-        cout << "Inserted key!\n";
+        cout << "Inserted key!" << endl;
     }
     else {
-        cout << "Insert failed! Key " << key << " already exists!\n";
+        cout << "Insert failed! Key " << key << " already exists!" << endl;
     }
 }
 
@@ -97,21 +108,36 @@ void Set::insert_key(std::set<int> &set, int key) {
 void Set::remove_key(std::set<int> &set, int key) {
     auto key_value = set.find(key);
     if (key_value == set.end()) {
-        cout << "Remove failed! Key " << key << " NOT found!\n";
+        cout << "Remove failed! Key " << key << " NOT found!" << endl;
     }
     else {
         set.erase(key);
-        cout << "Removed key!\n";
+        cout << "Removed key!" << endl;
     }
 }
 
 /* Look up if key exists */
-void Set::lookup_key(std::set<int> &set, int key) {
+bool Set::lookup_key_linear(std::set<int> &set, int key) {
     auto key_value = set.find(key);
     if (key_value == set.end()) {
-        cout << "Key " << key << " NOT found!\n";
+        cout << "Key " << key << " NOT found!" << endl;
+        return false;
     }
     else {
-        cout << "Key " << key << " found in the set!\n";
+        cout << "Key " << key << " found in the set!" << endl;
+        return true;
+    }
+}
+
+
+/* Look up if key exists */
+bool Set::lookup_key_binary(std::set<int> &set, int key) {
+    if (binary_search(set.begin(), set.end(), key)) {
+        cout << "Key " << key << " NOT found!" << endl;
+        return false;
+    }
+    else {
+        cout << "Key " << key << " found in the set!" << endl;
+        return true;
     }
 }

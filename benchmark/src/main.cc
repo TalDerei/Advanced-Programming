@@ -11,8 +11,6 @@
 #include "SortedVector.h"
 #include "UnsortedVector.h"
 
-using namespace std;
-
 /**
  * arg_t args struct for CLI parameters
  */
@@ -24,7 +22,7 @@ struct arg_t {
     int key = 0;
 
     /** data structure between set, list, ordered-vector, and unordered-vector */
-    string data_structure = "";
+    std::string data_structure = "";
 
     /** percentage of the operations that are 'search' only */
     int read_only_ratio = 0;
@@ -44,7 +42,7 @@ void parse_args(int argc, char **argv, arg_t &args) {
                 args.iterations = atoi(optarg);
                 break;
             case 'b':
-                args.data_structure = string(optarg);
+                args.data_structure = std::string(optarg);
                 break;
             case 'c':
                 args.read_only_ratio = atoi(optarg);
@@ -53,41 +51,39 @@ void parse_args(int argc, char **argv, arg_t &args) {
                 args.key = atoi(optarg);
                 break;
             default:
-                cout << "One or more parameters invalid! Try again!";
+                std::cout << "One or more parameters invalid! Try again!";
                 break;
         }
     }
 }
 
 int main(int argc, char **argv) {
+    // CLI configuration parameters
     arg_t args;
     parse_args(argc, argv, args);
+
     if (args.data_structure == "set") {
-        Set s;
-        s.set(args.iterations, args.key, args.read_only_ratio);
+        Set set;
+        set.set(args.iterations, args.key, args.read_only_ratio);
     }
     else if (args.data_structure == "list") {
-        List l;
-        l.list(args.iterations, args.key, args.read_only_ratio);
+        List list;
+        list.list(args.iterations, args.key, args.read_only_ratio);
     }
     else if (args.data_structure == "sorted_vector") {
-        SortedVector v;
-        v.vector(args.iterations, args.key, args.read_only_ratio);
+        SortedVector sorted_vector;
+        sorted_vector.vector(args.iterations, args.key, args.read_only_ratio);
     }
     else if (args.data_structure == "unsorted_vector") {
-        UnsortedVector v;
-        v.vector(args.iterations, args.key, args.read_only_ratio);
+        UnsortedVector unsorted_vector;
+        unsorted_vector.vector(args.iterations, args.key, args.read_only_ratio);
     }
     else {
-        cout << "One or more parameters invalid! Try again!";
+        std::cout << "One or more parameters invalid! Try again!" << std::endl;
     }
 }
 
+// https://medium.com/@rodrigues.b.nelson/choosing-wisely-c-containers-and-big-oh-complexity-64f9bd1e7e4c
+// https://medium.com/@gx578007/searching-vector-set-and-unordered-set-6649d1aa7752
 
-/**
- * experiment with binary search in sets: e.g. binary_search(arr.begin(), arr.end(), 15)
- * binary_search doesn’t work well with set/multiset iterators, because they don’t allow random access
- * experiment with unordered set in sets
- * sort vector and then run binary search vs unsorted vector and search (O(n))
- * run tests and record data
- */
+// fix size of initial set to be based on max_key length / 2
