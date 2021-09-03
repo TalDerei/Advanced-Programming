@@ -1,6 +1,10 @@
 /**
- * @file UnsortedVector.cc
- * Unsorted represetation of a vector
+ * @file UnortedVector.cc
+ * Sorted Vectors are dynamic arrays with the ability to resize itself automatically
+ * when elements are inserted and deleted. Vector elements are placed in contiguous 
+ * storage so that they can be accessed and traversed using iterators, and their
+ * storage is handled automatically by the container. And unlike sets, vector
+ * elements can be duplicates. 
  * 
  * Time Complexity:
  * Insertion Time: O(1)
@@ -18,16 +22,8 @@
 
 using namespace std;
 
-/* Constructor for creating Vector objects */
-void UnsortedVector::vector() {
-
-}
-
 /* Vector interface logic */
 void UnsortedVector::vector(int iterations, int key, int read_only_ratio) {
-    /* Start execution time */
-    auto start = chrono::high_resolution_clock::now();
-
     /* Initialize empty vector of ints */
     std::vector<int> myvector;
 
@@ -35,67 +31,76 @@ void UnsortedVector::vector(int iterations, int key, int read_only_ratio) {
     std::vector<int>::iterator it;
 
     /* Populate vector with key values */
-    init_vector(myvector, iterations);
+    init_vector(myvector, key);
+
+    /* Start execution time */
+    auto start = chrono::high_resolution_clock::now();
 
     /* Randomly switch between different vector operations */
     srand(time(0));
     for (int counter = 0; counter < iterations; counter++) {
         long opt = rand() % 100;
         long rand_key = rand() % key; 
-        cout << "opt is: " << opt << "\n";
         if (opt <= read_only_ratio) {
             lookup_key(myvector, rand_key);
         } 
-        else if (opt > read_only_ratio && opt <= (100-read_only_ratio)/2) {
+        if (opt > read_only_ratio && opt <= (((100-read_only_ratio)/2)+read_only_ratio)) {
             insert_key(myvector, rand_key);
         }
-        else if (opt > (100-read_only_ratio)/2 && opt <= 100) {
+        else if (opt > (((100-read_only_ratio)/2)+read_only_ratio) && opt <= 100) {
             remove_key(myvector, rand_key);
         }
     }
-    
+
     /* finish execution time */
     auto finish = chrono::high_resolution_clock::now();
 
     /* duration represents time interval */
     chrono::duration<double> elapse_time = finish - start;
 
-    cout << "Execution time elapsed is: " << elapse_time.count() << "\n";
-
     /* print elements of vector */
-    for (it = myvector.begin(); it != myvector.end(); ++it) {
-        cout << *it << " "; 
-    }
-    cout << "\n";
+    // for (auto i = myvector.begin(); i != myvector.end(); ++i) {
+    //     std::cout << *i << ' ';
+    // } 
+    // std::cout << endl;
+
+    std::cout << "size of final vector is: " << myvector.size() << endl;
+
+    std::cout << "Execution time elapsed is: " << elapse_time.count() << endl;
 }
 
 /* Populate vector to 50% of max capacity */
-void UnsortedVector::init_vector(std::vector<int> &vector, int iterations) {
+void UnsortedVector::init_vector(std::vector<int> &vector, int key) {
     srand(time(0));
-    for (int i = 0; i < iterations / 2; i++) {
-        vector.push_back(rand() % 100);
+    for (int i = 0; i < key / 2; i++) {
+        vector.push_back(rand() % key);
     }
 }
 
 /* Insert new key */
 void UnsortedVector::insert_key(std::vector<int> &vector, int key) {
     vector.push_back(key);
-    cout << "Inserted key!\n";
+    // cout << "Inserted key!\n";
 }
 
 /* Remove existing key */
 void UnsortedVector::remove_key(std::vector<int> &vector, int key) {
-    vector.erase(vector.begin() + key);
-    cout << "Removed key!\n";
+    std::vector<int>::iterator key_value = std::find(vector.begin(), vector.end(), key);
+    if (key_value != vector.end() && *key_value == key) {
+        vector.erase(key_value);
+        // cout << "Removed key!\n";
+    }
 }
 
 /* Look up if key exists */
-void UnsortedVector::lookup_key(std::vector<int> &vector, int key) {
+bool UnsortedVector::lookup_key(std::vector<int> &vector, int key) {
     std::vector<int>::iterator key_value = std::find(vector.begin(), vector.end(), key);
     if (key_value == vector.end()) {
-        cout << "Key " << key << " NOT found!\n";
+        // cout << "Key " << key << " NOT found!" << endl;
+        return false;
     }
     else {
-        cout << "Key " << key << " found in the vector!\n";
+        // cout << "Key " << key << " found in the list!" << endl;
+        return true;
     }
 }

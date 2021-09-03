@@ -6,9 +6,6 @@
 #include <set>
 
 class Set {
-    /* Initialize set to be empty */
-    std::set<int> myset;
-
     public:
         /* The constructor is implicitely empty */
         Set() {
@@ -30,7 +27,7 @@ class Set {
         /* Perform linear search lookup for key */
         bool lookup_key_linear(std::set<int>&, int);
 
-        /* perform binary search lookup for key */
+        /* Perform binary search lookup for key */
         bool lookup_key_binary(std::set<int>&, int);
 };
 

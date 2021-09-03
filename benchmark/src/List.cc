@@ -1,5 +1,5 @@
 /**
- * @file list.cc
+ * @file Lmist.cc
  * Lists are sequence containers that allow
  * non-contiguous memory allocation. Compared to a vector,
  * list-traversals are slow, but once a position has been found,
@@ -23,16 +23,8 @@
 
 using namespace std;
 
-/* Constructor for creating List objects */
-void List::list() {
-
-}
-
 /* List interface logic */
 void List::list(int iterations, int key, int read_only_ratio) {
-    /* Start execution time */
-    auto start = chrono::high_resolution_clock::now();
-
     /* Initialize empty list of ints */
     std::list<int> mylist;
 
@@ -40,14 +32,18 @@ void List::list(int iterations, int key, int read_only_ratio) {
     std::list<int>::iterator it;
 
     /* Populate list with key values */
-    init_list(mylist, iterations);
+    init_list(mylist, key);
 
+    std::cout << "size of set after initialization: " << mylist.size();
+
+    /* Start execution time */
+    auto start = chrono::high_resolution_clock::now();
+    
     /* Randomly switch between different list operations */
     srand(time(0));
     for (int counter = 0; counter < iterations; counter++) {
         long opt = rand() % 100;
         long rand_key = rand() % key; 
-        cout << "opt is: " << opt << "\n";
         if (opt <= read_only_ratio) {
             lookup_key(mylist, rand_key);
         } 
@@ -65,42 +61,53 @@ void List::list(int iterations, int key, int read_only_ratio) {
     /* duration represents time interval */
     chrono::duration<double> elapse_time = finish - start;
 
-    cout << "Execution time elapsed is: " << elapse_time.count() << "\n";
-
-    /* print elements of list */
+    /* Print elements of set */
     for (it = mylist.begin(); it != mylist.end(); ++it) {
-        cout << *it << " "; 
+        cout << *it << " " << endl;
     }
-    cout << "\n";
+
+    std::cout << "Execution time elapsed is: " << elapse_time.count() << endl;
+
+    std::cout << "size of final set is: " << mylist.size();
 }
 
+
 /* Populate list to 50% of max capacity */
-void List::init_list(std::list<int> &list, int iterations) {
+void List::init_list(std::list<int> &list, int key) {
     srand(time(0));
-    for (int i = 0; i < iterations / 2; i++) {
-        list.push_back(rand() % 100);
+    for (int i = 0; i < key / 2; i++) {
+        list.push_front(rand() % key);
     }
 }
 
 /* Insert new key */
 void List::insert_key(std::list<int> &list, int key) {
-    list.push_back(key);
-    cout << "Inserted key!\n";
+    list.push_front(key);
 }
 
 /* Remove existing key */
 void List::remove_key(std::list<int> &list, int key) {
+    std::list<int>::iterator key_value = std::find(list.begin(), list.end(), key);
+    if (key_value == list.end()) {
+        /* cout << "Remove failed! Key " << key << " NOT found!" << endl; */
+    }
+    else {
     list.remove(key);
-    cout << "Removed key!\n";
+        /* cout << "Removed key!" << endl; */
+    }
 }
 
 /* Look up if key exists */
-void List::lookup_key(std::list<int> &list, int key) {
+bool List::lookup_key(std::list<int> &list, int key) {
     std::list<int>::iterator key_value = std::find(list.begin(), list.end(), key);
     if (key_value == list.end()) {
-        cout << "Key " << key << " NOT found!\n";
+        // cout << "Key " << key << " NOT found!" << endl;
+        return false;
     }
     else {
-        cout << "Key " << key << " found in the list!\n";
+        // cout << "Key " << key << " found in the list!" << endl;
+        return true;
     }
 }
+
+

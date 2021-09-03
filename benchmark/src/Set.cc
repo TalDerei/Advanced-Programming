@@ -1,5 +1,5 @@
 /**
- * @file set.cc
+ * @file Set.cc
  * Sets are associative containers of the c++ std library
  * which stores elements in a sorted manner. All the elements of a set are 
  * unique and cannot be modified, but can be inserted and/or removed. 
@@ -29,13 +29,14 @@ using namespace std;
 
 /* Set interface logic */
 void Set::set(int iterations, int key, int read_only_ratio) {
+    /* Initialize set to be empty */
+    std::set<int> myset;
+
     /* Set iterator */
     std::set<int>::iterator it;
 
     /* Populate set with key values */
     init_set(myset, key);
-
-    cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!size of set is: " << myset.size();
 
     /* Start execution time */
     auto start = chrono::high_resolution_clock::now();
@@ -45,13 +46,9 @@ void Set::set(int iterations, int key, int read_only_ratio) {
     for (int counter = 0; counter < iterations; counter++) {
         long opt = rand() % 100;
         long rand_key = rand() % key; 
-        cout << "opt is: " << opt << "\n";
         if (opt <= read_only_ratio) {
             lookup_key_linear(myset, rand_key);
         } 
-        // if (opt <= read_only_ratio) {
-        //     lookup_key_binary(myset, rand_key);
-        // } 
         else if (opt > read_only_ratio && opt <= (100-read_only_ratio)/2) {
             insert_key(myset, rand_key);
         }
@@ -67,13 +64,13 @@ void Set::set(int iterations, int key, int read_only_ratio) {
     chrono::duration<double> elapse_time = finish - start;
 
     /* Print elements of set */
-    for (it = myset.begin(); it != myset.end(); ++it) {
-        cout << *it << " " << endl;
-    }
+    // for (it = myset.begin(); it != myset.end(); ++it) {
+    //     cout << *it << " " << endl;
+    // }
 
-    cout << "Execution time elapsed is: " << elapse_time.count() << endl;
+    std::cout << "Execution time elapsed is: " << elapse_time.count() << endl;
 
-    cout << "size of set is: " << myset.size();
+    std::cout << "size of set is: " << myset.size();
 }
 
 /* Populate set to 50% of max capacity */
@@ -97,10 +94,10 @@ void Set::insert_key(std::set<int> &set, int key) {
     auto key_value = set.find(key);
     if (key_value == set.end()) {
         set.insert(key);
-        cout << "Inserted key!" << endl;
+        /* cout << "Inserted key!" << endl; */
     }
     else {
-        cout << "Insert failed! Key " << key << " already exists!" << endl;
+        /* cout << "Insert failed! Key " << key << " already exists!" << endl; */
     }
 }
 
@@ -108,11 +105,11 @@ void Set::insert_key(std::set<int> &set, int key) {
 void Set::remove_key(std::set<int> &set, int key) {
     auto key_value = set.find(key);
     if (key_value == set.end()) {
-        cout << "Remove failed! Key " << key << " NOT found!" << endl;
+        /* cout << "Remove failed! Key " << key << " NOT found!" << endl; */
     }
     else {
         set.erase(key);
-        cout << "Removed key!" << endl;
+        /* cout << "Removed key!" << endl; */
     }
 }
 
@@ -120,24 +117,11 @@ void Set::remove_key(std::set<int> &set, int key) {
 bool Set::lookup_key_linear(std::set<int> &set, int key) {
     auto key_value = set.find(key);
     if (key_value == set.end()) {
-        cout << "Key " << key << " NOT found!" << endl;
+        /* cout << "Key " << key << " NOT found!" << endl; */
         return false;
     }
     else {
-        cout << "Key " << key << " found in the set!" << endl;
-        return true;
-    }
-}
-
-
-/* Look up if key exists */
-bool Set::lookup_key_binary(std::set<int> &set, int key) {
-    if (binary_search(set.begin(), set.end(), key)) {
-        cout << "Key " << key << " NOT found!" << endl;
-        return false;
-    }
-    else {
-        cout << "Key " << key << " found in the set!" << endl;
+        /* cout << "Key " << key << " found in the set!" << endl; */
         return true;
     }
 }
