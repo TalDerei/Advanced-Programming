@@ -21,6 +21,7 @@
 #include "UnsortedVector.h"
 
 using namespace std;
+using std::swap;
 
 /* Vector interface logic */
 void UnsortedVector::vector(int iterations, int key, int read_only_ratio) {
@@ -80,27 +81,25 @@ void UnsortedVector::init_vector(std::vector<int> &vector, int key) {
 /* Insert new key */
 void UnsortedVector::insert_key(std::vector<int> &vector, int key) {
     vector.push_back(key);
-    // cout << "Inserted key!\n";
+    /* cout << "Inserted key!" << key << endl; */
 }
 
 /* Remove existing key */
 void UnsortedVector::remove_key(std::vector<int> &vector, int key) {
     std::vector<int>::iterator key_value = std::find(vector.begin(), vector.end(), key);
-    if (key_value != vector.end() && *key_value == key) {
-        vector.erase(key_value);
-        // cout << "Removed key!\n";
-    }
+    *key_value = std::move(vector.back());    
+    vector.pop_back();   
 }
 
 /* Look up if key exists */
 bool UnsortedVector::lookup_key(std::vector<int> &vector, int key) {
     std::vector<int>::iterator key_value = std::find(vector.begin(), vector.end(), key);
     if (key_value == vector.end()) {
-        // cout << "Key " << key << " NOT found!" << endl;
+        /* cout << "Key " << key << " NOT found!" << endl; */
         return false;
     }
     else {
-        // cout << "Key " << key << " found in the list!" << endl;
+        /* cout << "Key " << key << " found in the list!" << endl; */
         return true;
     }
 }

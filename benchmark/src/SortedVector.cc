@@ -7,8 +7,8 @@
  * elements can be duplicates. 
  * 
  * Time Complexity:
- * Insertion Time: O(1)
- * Deletiion Time: O(1)
+ * Insertion Time: O(1) + rebalancing/shifting vector
+ * Deletiion Time: O(1) + rebalancing/shifting vector
  * Search Time: O(n) unsorted, O(log n) sorted
  */
 
@@ -33,6 +33,9 @@ void SortedVector::vector(int iterations, int key, int read_only_ratio) {
     /* Populate vector with key values */
     init_vector(myvector, key);
 
+    /* Sort the vector initially */
+    sort(myvector.begin(), myvector.end());
+
     /* Start execution time */
     auto start = chrono::high_resolution_clock::now();
 
@@ -41,8 +44,6 @@ void SortedVector::vector(int iterations, int key, int read_only_ratio) {
     for (int counter = 0; counter < iterations; counter++) {
         long opt = rand() % 100;
         long rand_key = rand() % key; 
-        /* Sort vector each time before insert, remove, and search functions */
-        sort(myvector.begin(), myvector.end());
         if (opt <= read_only_ratio) {
             lookup_key(myvector, rand_key);
         } 
@@ -61,10 +62,10 @@ void SortedVector::vector(int iterations, int key, int read_only_ratio) {
     chrono::duration<double> elapse_time = finish - start;
 
     /* print elements of vector */
-    for (auto i = myvector.begin(); i != myvector.end(); ++i) {
-        std::cout << *i << ' ';
-    } 
-    std::cout << endl;
+    // for (auto i = myvector.begin(); i != myvector.end(); ++i) {
+    //     std::cout << *i << ' ';
+    // } 
+    // std::cout << endl;
 
     std::cout << "size of final vector is: " << myvector.size() << endl;
 
@@ -81,29 +82,32 @@ void SortedVector::init_vector(std::vector<int> &vector, int key) {
 
 /* Insert new key */
 void SortedVector::insert_key(std::vector<int> &vector, int key) {
-    vector.push_back(key);
-    // cout << "Inserted key!\n";
+    std::vector<int>::iterator iterator = std::lower_bound(vector.begin(), vector.end(), key);
+    if (iterator != vector.end() && *iterator == key) {
+        vector.insert(iterator, key);
+    /* cout << "Inserted key!" << endl; */
+    }
 }
 
 /* Remove existing key */
 void SortedVector::remove_key(std::vector<int> &vector, int key) {
-    std::vector<int>::iterator it = std::lower_bound(vector.begin(), vector.end(), key);
-    if (it != vector.end() && *it == key) {
-        vector.erase(it);
-        // cout << "Removed key!\n";
+    std::vector<int>::iterator iterator = std::lower_bound(vector.begin(), vector.end(), key);
+    if (iterator != vector.end() && *iterator == key) {
+        vector.erase(iterator);
+        /* cout << "Removed key!" << endl; */
     }
 }
 
 /* Look up if key exists */
 bool SortedVector::lookup_key(std::vector<int> &vector, int key) {
-    // implement lower_bound() function which is binary search
-    std::vector<int>::iterator it = std::lower_bound(vector.begin(), vector.end(), key);
-    if (it != vector.end() && *it == key) {
-        // std:: cout << "found key! " << key << endl; 
+    /* implement lower_bound() function which is binary search */
+    std::vector<int>::iterator iterator = std::lower_bound(vector.begin(), vector.end(), key);
+    if (iterator != vector.end() && *iterator == key) {
+        /* std:: cout << "found key! " << key << endl; */
         return true;
     }
     else {
-        // std:: cout << "did not find key! " << key << endl; 
+        /* std:: cout << "did not find key! " << key << endl; */
         return false;
     }
 }

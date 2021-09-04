@@ -49,10 +49,10 @@ void Set::set(int iterations, int key, int read_only_ratio) {
         if (opt <= read_only_ratio) {
             lookup_key_linear(myset, rand_key);
         } 
-        else if (opt > read_only_ratio && opt <= (100-read_only_ratio)/2) {
+        else if (opt > read_only_ratio && opt <= (((100-read_only_ratio)/2)+read_only_ratio)) {
             insert_key(myset, rand_key);
         }
-        else if (opt > (100-read_only_ratio)/2 && opt <= 100) {
+        else if (opt > (((100-read_only_ratio)/2)+read_only_ratio) && opt <= 100) {
             remove_key(myset, rand_key);
         }
     }

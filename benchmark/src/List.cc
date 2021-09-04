@@ -9,7 +9,7 @@
  * 
  * Time Complexity:
  * Insertion Time: O(1)
- * Deletiion Time: O(1)
+ * Deletion Time: O(1)
  * Search Time: O(n)
  */
 
@@ -62,9 +62,9 @@ void List::list(int iterations, int key, int read_only_ratio) {
     chrono::duration<double> elapse_time = finish - start;
 
     /* Print elements of set */
-    for (it = mylist.begin(); it != mylist.end(); ++it) {
-        cout << *it << " " << endl;
-    }
+    // for (it = mylist.begin(); it != mylist.end(); ++it) {
+    //     cout << *it << " " << endl;
+    // }
 
     std::cout << "Execution time elapsed is: " << elapse_time.count() << endl;
 
@@ -87,25 +87,20 @@ void List::insert_key(std::list<int> &list, int key) {
 
 /* Remove existing key */
 void List::remove_key(std::list<int> &list, int key) {
-    std::list<int>::iterator key_value = std::find(list.begin(), list.end(), key);
-    if (key_value == list.end()) {
-        /* cout << "Remove failed! Key " << key << " NOT found!" << endl; */
-    }
-    else {
-    list.remove(key);
-        /* cout << "Removed key!" << endl; */
-    }
+    auto removed = std::remove(list.begin(), list.end(), key);
+    list.erase(removed, list.end());
+    /* list.remove(key); */
 }
 
 /* Look up if key exists */
 bool List::lookup_key(std::list<int> &list, int key) {
     std::list<int>::iterator key_value = std::find(list.begin(), list.end(), key);
     if (key_value == list.end()) {
-        // cout << "Key " << key << " NOT found!" << endl;
+        /* cout << "Key " << key << " NOT found!" << endl; */
         return false;
     }
     else {
-        // cout << "Key " << key << " found in the list!" << endl;
+        /* cout << "Key " << key << " found in the list!" << endl; */
         return true;
     }
 }
