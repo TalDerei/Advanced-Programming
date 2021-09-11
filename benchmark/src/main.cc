@@ -85,3 +85,5 @@ int main(int argc, char **argv) {
 
 // https://medium.com/@rodrigues.b.nelson/choosing-wisely-c-containers-and-big-oh-complexity-64f9bd1e7e4c
 // https://medium.com/@gx578007/searching-vector-set-and-unordered-set-6649d1aa7752
+
+// reserve() for vectors - 2-3x faster speedup potentially?
