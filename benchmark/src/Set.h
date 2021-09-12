@@ -14,24 +14,16 @@ class Set {
         Set() {}
 
         /** Insert key into set */
-        bool insert(int key) {
+        void insert(int key) {
             if (set.find(key) == set.end()) {
                 set.insert(key);
-                return true;
-            }
-            else {
-                return false;
             }
         }
 
         /** Remove key from set */
-        bool remove(int key) {
-            if (set.find(key) == set.end()) {
-                return false;
-            }
-            else {
+        void remove(int key) {
+            if (set.find(key) != set.end()) {
                 set.erase(key);
-                return true;
             }
         }
 
@@ -48,6 +40,15 @@ class Set {
         /** Hack for the benchmark harness.  It inserts without checking for duplicates */
         void append(int key) {
             set.insert(key);
+        }
+
+        /** Print set */
+        void print() {
+            std::set<int>::iterator iterator;
+            for (iterator = set.begin(); iterator != set.end(); ++iterator) {
+                std::cout << *iterator << " " << std::endl;
+            }
+            std::cout << "size of set is: " << set.size() << std::endl;
         }
 };
 

@@ -15,16 +15,14 @@ class List {
         List() {}
 
         /** Insert key into list */
-        bool insert(int key) {
+        void insert(int key) {
             list.push_front(key);
-            return true;
         }
 
         /** Remove key from set */
-        bool remove(int key) {
-            auto removed = std::remove(list.begin(), list.end(), key);
+        void remove(int key) {
+            std::list<int>::iterator removed = std::remove(list.begin(), list.end(), key);
             list.erase(removed, list.end());
-            return true;
         }
 
         /** Perform linear search lookup for key */
@@ -40,6 +38,15 @@ class List {
         /** Hack for the benchmark harness.  It inserts without checking for duplicates */
         void append(int key) {
             list.push_back(key);
+        }
+
+        /** Print list */
+        void print() {
+            std::list<int>::iterator iterator;
+            for (iterator = list.begin(); iterator != list.end(); ++iterator) {
+                std::cout << *iterator << " " << std::endl;
+            }
+            std::cout << "size of list is: " << list.size() << std::endl;
         }
 };
 

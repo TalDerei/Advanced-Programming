@@ -12,21 +12,19 @@ class SortedVector {
         SortedVector() {}
 
         /** Insert key into vector */
-        bool insert(int key) {
+        void insert(int key) {
             std::vector<int>::iterator iterator = std::lower_bound(vector.begin(), vector.end(), key);
             if (iterator != vector.end() && *iterator == key) {
                 vector.insert(iterator, key);
             }
-            return true;
         }
 
         /** Remove key from vector */
-        bool remove(int key) {
+        void remove(int key) {
             std::vector<int>::iterator iterator = std::lower_bound(vector.begin(), vector.end(), key);
             if (iterator != vector.end() && *iterator == key) {
                 vector.erase(iterator);
             }
-            return true;
         }
 
         /** Perform linear search lookup for vector */
@@ -44,6 +42,15 @@ class SortedVector {
         /** Hack for the benchmark harness.  It inserts without checking for duplicates */
         void append(int key) {
             vector.push_back(key);
+        }
+
+        /** Print vector */
+        void print() {
+            std::vector<int>::iterator iterator;
+            for (iterator = vector.begin(); iterator != vector.end(); ++iterator) {
+                std::cout << *iterator << " " << std::endl;
+            }
+            std::cout << "size of sorted vector is: " << vector.size() << std::endl;
         }
 };
 

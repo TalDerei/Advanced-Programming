@@ -14,17 +14,15 @@ class UnsortedVector {
         UnsortedVector() {}
 
         /** Insert key into vector */
-        bool insert(int key) {
+        void insert(int key) {
             vector.push_back(key);
-            return true;
         }
 
         /** Remove key from set */
-        bool remove(int key) {
+        void remove(int key) {
             std::vector<int>::iterator key_value = std::find(vector.begin(), vector.end(), key);
             *key_value = std::move(vector.back());    
             vector.pop_back();
-            return true;
         }
 
         /** Perform linear search lookup for key */
@@ -41,6 +39,15 @@ class UnsortedVector {
         /** Hack for the benchmark harness.  It inserts without checking for duplicates */
         void append(int key) {
             vector.push_back(key);
+        }
+
+        /** Print vector */
+        void print() {
+            std::vector<int>::iterator iterator;
+            for (iterator = vector.begin(); iterator != vector.end(); ++iterator) {
+                std::cout << *iterator << " " << std::endl;
+            }
+            std::cout << "size of unsorted vector is: " << vector.size() << std::endl;
         }
 };
 

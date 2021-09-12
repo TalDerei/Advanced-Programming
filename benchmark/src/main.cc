@@ -85,11 +85,9 @@ void run_test(arg_t &args) {
         int key = rand() % args.key_max; 
         if (opt <= args.read_only_ratio) {
             ds.lookup(key);
-        } 
-        else if (opt > args.read_only_ratio && opt <= (((100-args.read_only_ratio)/2)+args.read_only_ratio)) {
+        } else if (opt > args.read_only_ratio && opt <= (((100-args.read_only_ratio)/2)+args.read_only_ratio)) {
             ds.insert(key);
-        }
-        else if (opt > (((100-args.read_only_ratio)/2)+args.read_only_ratio) && opt <= 100) {
+        } else if (opt > (((100-args.read_only_ratio)/2)+args.read_only_ratio) && opt <= 100) {
             ds.remove(key);
         }
     }
@@ -101,13 +99,9 @@ void run_test(arg_t &args) {
     std::chrono::duration<double> elapse_time = finish - start;
 
     /* Print elements of data structure */
-    // for (it = ds.begin(); it != ds.end(); ++it) {
-    //     cout << *it << " " << endl;
-    // }
+    // ds.print();
 
     std::cout << "Execution time elapsed is: " << elapse_time.count() << std::endl;
-
-    // std::cout << "size of set is: " << ds.size() << std::endl;
 }
 
 int main(int argc, char **argv) {
