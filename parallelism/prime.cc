@@ -16,11 +16,23 @@
  * approaches perform similarly.  But for N = 10ˆ6 and 10ˆ9, it is possible 
  * to get a HUGE speedup and the differences between approaches should arise.
  *
+ * g++ --std=c++17 -O3 prime.cc -ltbb -o parallel_for
+ * N = 1009 (10^3), 1000003 (10^6), 1000000007 (10^9)
+ * 
+ * TBB Reference:
+ * https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-guide/parallelizing-simple-loops/parallelfor.html
+ * https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-guide/parallelizing-simple-loops/parallelfor/controlling-chunking.html
+ * https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-guide/parallelizing-simple-loops/parallelfor/partitioner-summary.html
  */
 
 #include <iostream>
 #include <chrono>
 #include <tbb/tbb.h>
+#include <mutex>
+#include <oneapi/tbb/info.h>
+#include <oneapi/tbb/parallel_for.h>
+#include <oneapi/tbb/task_arena.h>
+#include <cassert>
 using namespace std;
 
 int main() {
@@ -32,21 +44,26 @@ int main() {
     cout << "Enter a positive integer: ";
     cin >> n;
 
+    int num_threads = oneapi::tbb::info::default_concurrency();
+    cout << "Default number of threads is: " << num_threads << endl;
+    
     /** Start execution time */
     std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
 
     if (n == 0 || n == 1) {
         isPrime = false;
     } else {
-        parallel_for(tbb::blocked_range<size_t>(2, n / 2), [&](tbb::blocked_range<size_t> r)
+        /** TBB breaks iteration space into chunks, and runs each chunk on a seperate thread */
+        parallel_for(blocked_range<size_t>(2, n / 2), [&](blocked_range<size_t> r)
         {
+            /** Chunk sizes automated to achievie load balancing and limit overhead */
             for (size_t i = r.begin(); i < r.end(); ++i) {
                 if (n % i == 0) {
                     isPrime = false;
                     break;
                 }
             }
-        });
+        }, auto_partitioner());
     }
 
     /** Finish execution time */
@@ -65,7 +82,3 @@ int main() {
 
     return 0;
 }
-
-/**
- * g++ --std=c++17 -O3 prime.cc -ltbb -o parallel_for
- */
