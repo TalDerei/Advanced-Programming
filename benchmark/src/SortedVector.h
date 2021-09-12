@@ -4,26 +4,47 @@
 #include <vector>
 
 class SortedVector {
+    /** Sorted Vector data structure */
+    std::vector<int> vector;
+
     public:
-        /* The constructor is implicitely empty */
-        SortedVector() {
-        
+        /** The constructor is implicitely empty */
+        SortedVector() {}
+
+        /** Insert key into vector */
+        bool insert(int key) {
+            std::vector<int>::iterator iterator = std::lower_bound(vector.begin(), vector.end(), key);
+            if (iterator != vector.end() && *iterator == key) {
+                vector.insert(iterator, key);
+            }
+            return true;
         }
 
-        /* Wrapper function for calling APIs */
-        void vector(int, int, int);
+        /** Remove key from vector */
+        bool remove(int key) {
+            std::vector<int>::iterator iterator = std::lower_bound(vector.begin(), vector.end(), key);
+            if (iterator != vector.end() && *iterator == key) {
+                vector.erase(iterator);
+            }
+            return true;
+        }
 
-        /* Initialize vector to half the size of the key_length */
-        void init_vector(std::vector<int>&, int);
+        /** Perform linear search lookup for vector */
+        bool lookup(int key) {
+            /** implement lower_bound() function which is binary search */
+            std::vector<int>::iterator iterator = std::lower_bound(vector.begin(), vector.end(), key);
+            if (iterator != vector.end() && *iterator == key) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
 
-        /* Insert key into vector */
-        void insert_key(std::vector<int>&, int);
-
-        /* Remove key from set */
-        void remove_key(std::vector<int>&, int);
-
-        /* Perform linear search lookup for key */
-        bool lookup_key(std::vector<int>&, int);
+        /** Hack for the benchmark harness.  It inserts without checking for duplicates */
+        void append(int key) {
+            vector.push_back(key);
+        }
 };
 
 #endif 

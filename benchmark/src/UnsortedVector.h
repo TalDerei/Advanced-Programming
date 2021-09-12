@@ -6,26 +6,42 @@
 #include <vector>
 
 class UnsortedVector {
+    /** Unsorted Vector data structure */
+    std::vector<int> vector;
+
     public:
-        /* The constructor is implicitely empty */
-        UnsortedVector() {
-        
+        /** The constructor is implicitely empty */
+        UnsortedVector() {}
+
+        /** Insert key into vector */
+        bool insert(int key) {
+            vector.push_back(key);
+            return true;
         }
 
-        /* Wrapper function for calling APIs */
-        void vector(int, int, int);
+        /** Remove key from set */
+        bool remove(int key) {
+            std::vector<int>::iterator key_value = std::find(vector.begin(), vector.end(), key);
+            *key_value = std::move(vector.back());    
+            vector.pop_back();
+            return true;
+        }
 
-        /* Initialize vector to half the size of the key_length */
-        void init_vector(std::vector<int>&, int);
+        /** Perform linear search lookup for key */
+        bool lookup(int key) {
+            std::vector<int>::iterator key_value = std::find(vector.begin(), vector.end(), key);
+            if (key_value == vector.end()) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
 
-        /* Insert key into vector */
-        void insert_key(std::vector<int>&, int);
-
-        /* Remove key from set */
-        void remove_key(std::vector<int>&, int);
-
-        /* Perform linear search lookup for key */
-        bool lookup_key(std::vector<int>&, int);
+        /** Hack for the benchmark harness.  It inserts without checking for duplicates */
+        void append(int key) {
+            vector.push_back(key);
+        }
 };
 
 #endif 

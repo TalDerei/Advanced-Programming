@@ -1,4 +1,4 @@
-/* Header file for Set.cc */
+/* Set Data Structure */
 
 #ifndef SET_DEF
 #define SET_DEF
@@ -6,29 +6,49 @@
 #include <set>
 
 class Set {
+    /** Tree data structure */
+    std::set<int> set;
+    
     public:
-        /* The constructor is implicitely empty */
-        Set() {
-        
+        /** The constructor is implicitely empty */
+        Set() {}
+
+        /** Insert key into set */
+        bool insert(int key) {
+            if (set.find(key) == set.end()) {
+                set.insert(key);
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
-        /* Wrapper function for calling APIs */
-        void set(int, int, int);
+        /** Remove key from set */
+        bool remove(int key) {
+            if (set.find(key) == set.end()) {
+                return false;
+            }
+            else {
+                set.erase(key);
+                return true;
+            }
+        }
 
-        /* Initialize set to half the size of the key_length */
-        void init_set(std::set<int>&, int);
+        /** Perform binary search lookup for key */
+        bool lookup(int key) {
+            if (set.find(key) == set.end()) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
 
-        /* Insert key into set */
-        void insert_key(std::set<int>&, int);
-
-        /* Remove key from set */
-        void remove_key(std::set<int>&, int);
-
-        /* Perform linear search lookup for key */
-        bool lookup_key_linear(std::set<int>&, int);
-
-        /* Perform binary search lookup for key */
-        bool lookup_key_binary(std::set<int>&, int);
+        /** Hack for the benchmark harness.  It inserts without checking for duplicates */
+        void append(int key) {
+            set.insert(key);
+        }
 };
 
 #endif 

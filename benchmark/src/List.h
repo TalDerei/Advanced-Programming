@@ -4,28 +4,43 @@
 #define LIST_DEF
 
 #include <list>
+#include <iostream>
 
 class List {
+    /** List data structure */
+    std::list<int> list;
+
     public:
-        /* The constructor is implicitely empty */
-        List() {
-        
+        /** The constructor is implicitely empty */
+        List() {}
+
+        /** Insert key into list */
+        bool insert(int key) {
+            list.push_front(key);
+            return true;
         }
 
-        /* Wrapper function for calling APIs */
-        void list(int, int, int);
+        /** Remove key from set */
+        bool remove(int key) {
+            auto removed = std::remove(list.begin(), list.end(), key);
+            list.erase(removed, list.end());
+            return true;
+        }
 
-        /* Initialize list to half the size of the key_length */
-        void init_list(std::list<int>&, int);
+        /** Perform linear search lookup for key */
+        bool lookup(int key) {
+            if (std::find(list.begin(), list.end(), key) == list.end()) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
 
-        /* Insert key into list */
-        void insert_key(std::list<int>&, int);
-
-        /* Remove key from set */
-        void remove_key(std::list<int>&, int);
-
-        /* Perform linear search lookup for key */
-        bool lookup_key(std::list<int>&, int);
+        /** Hack for the benchmark harness.  It inserts without checking for duplicates */
+        void append(int key) {
+            list.push_back(key);
+        }
 };
 
 #endif 
