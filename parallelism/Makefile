@@ -1,75 +1,59 @@
-# Standard Makefile for a C++ project that compiles each .cc file into a .o
-# file, and then links .o files together to produce an executable.
+#  CSE 375/475 Assignment #1
+#  Fall 2021
 #
-# NB: we are using the "makefile includes d-files" technique to carefully
-# track dependencies.  
-
+#  Description: This makefile allows you to build the assignment by typing
+#  'make'.  Note that typing "BITS=64 make" will build a 64-bit executable
+#  instead of a 32-bit executable.
 #
-# The only part of this file that will change from one project to the next is 
-# right here, where we provide the names of the .cc files
-#
-
-# names of .cc files that have a main() function
-TARGETS = prime
-
-# names of other .cc files
-CXXFILES = # no common files :)
-
-#
-# The rest of this file should never need to change
+#  Note: It's worth understanding how this Makefile works
 #
 
-# Let the programmer choose 32 or 64 bits, but default to 64 bit
-BITS ?= 64
+# This defaults bits to 32, but allows it to be overridden on the command
+# line
+BITS = 64
 
-# Specify the name of the folder where all output will go
-ODIR := ./obj$(BITS)
+# Output directory
+ODIR  = obj64
+tmp  := $(shell mkdir -p $(ODIR))
 
-# This line ensures that the above folder will be created before any compiling
-# happens.
-output_folder := $(shell mkdir -p $(ODIR))
-
-# Generate the names of the .o files and .exe files that we will be creating.
-# Note that we name all .o files explicitly, so that we can add them to the
-# .PRECIOUS target, which prevents them from being auto-removed.
-COMMONOFILES = $(patsubst %, $(ODIR)/%.o, $(CXXFILES)) # NB: These get linked into every executable
-ALLOFILES    = $(patsubst %, $(ODIR)/%.o, $(CXXFILES) $(TARGETS))
-EXEFILES     = $(patsubst %, $(ODIR)/%.exe, $(TARGETS))
-
-# Generate the names of the dependency files that G++ will generate, so that we
-# can include them later in this makefile
-DFILES     = $(patsubst %.o, %.d, $(ALLOFILES))
-
-# Basic tool configuration for GCC/G++.  We will create debug symbols, enable
-# optimizations, and generate dependency information on-the-fly
+# Basic compiler configuration and flags
 CXX      = g++
-LD       = g++
-CXXFLAGS = -MMD -O3 -m$(BITS) -ggdb -std=c++17 -Wall -Werror
-LDFLAGS  = -m$(BITS) -lpthread 
+CXXFLAGS = -MMD -ggdb -O3 -std=gnu++17 -m$(BITS)
+LDFLAGS	 = -m$(BITS) -lpthread
 
-# Build 'all' by default, and don't clobber .o files after each build
-.DEFAULT_GOAL = all
-.PRECIOUS: $(ALLOFILES)
-.PHONY: all clean
+# The basenames of the c++ files that this program uses
+CXXFILES = main static_lb
 
-# Goal is to build all executables
-all: $(EXEFILES)
+# The executable we will build
+TARGET = $(ODIR)/main
 
-# Rules for building object files
-$(ODIR)/%.o: %.cc
-	@echo "[CXX] $< --> $@"
-	@$(CXX) $< -o $@ -c $(CXXFLAGS)
+# Create the .o names from the CXXFILES
+OFILES = $(patsubst %, $(ODIR)/%.o, $(CXXFILES))
 
-# Rules for building executables... we assume an executable uses *all* of the 
-# common OFILES
-$(ODIR)/%.exe: $(ODIR)/%.o $(COMMONOFILES)
-	@echo "[LD] $^ --> $@"
-	@$(CXX) $^ -o $@ $(LDFLAGS)
+# Create .d files to store dependency information, so that we don't need to
+# clean every time before running make
+DFILES = $(patsubst %.o, %.d, $(OFILES))
 
-# clean by clobbering the build folder
+# Default rule builds the executable
+all: $(TARGET)
+
+# clean up everything by clobbering the output folder
 clean:
-	@echo Cleaning up...
+	@echo cleaning up...
 	@rm -rf $(ODIR)
 
-# Include any dependencies we generated previously
+# build an .o file from a .cc file
+$(ODIR)/%.o: %.cc
+	@echo [CXX] $< "-->" $@
+	@$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+# Link rule for building the target from .o files
+$(TARGET): $(OFILES)
+	@echo [LD] $^ "-->" $@
+	@$(CXX) -o $@ $^ $(LDFLAGS)
+
+# Remember that 'all' and 'clean' aren't real targets
+.PHONY: all clean
+
+# Pull in all dependencies
 -include $(DFILES)
