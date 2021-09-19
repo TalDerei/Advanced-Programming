@@ -1,43 +1,49 @@
- #include "static_lb.h"
+ #include "load_balance.h"
 
-void static_lb::static_balancing(int n) {
+void load_balance::load_balancing(arg_t args) {
     /** Initialize the queue */
-    const int queue_size = init_queue(n);
+    const int queue_size = init_queue(args);
 
     /** Spawn threads */
-    spawn_threads(n, queue_size);
+    spawn_threads(args, queue_size);
 }
 
-int static_lb::init_queue(int n) {
-    for (int i = 0; i <= n; ++i) {
+int load_balance::init_queue(arg_t args) {
+    for (int i = 0; i <= args.size; ++i) {
         queue_global.prime_queue.push(i);
     }
-    return (int) (queue_global.prime_queue.size() / THREADS);    
+    return (int) (queue_global.prime_queue.size() / args.threads);    
 }
 
-void static_lb::spawn_threads(int n, int queue_size) { 
+void load_balance::spawn_threads(arg_t args, int queue_size) { 
     /** Vector of threads */
     std::vector<std::thread> threads;
 
     /** Spawn thread and insert into vector */
-    for (int i = 0; i < THREADS; i++) {
-        threads.push_back(std::thread(&static_lb::assignment, this, n, queue_size));
+    if (args.method == "static") {
+        for (int i = 0; i < args.threads; i++) {
+            threads.push_back(thread(&load_balance::static_tasks, this, args.size, queue_size));
+        }
+    }
+    else if (args.method == "dynamic") {
+        for (int i = 0; i < args.threads; i++) {
+            threads.push_back(thread(&load_balance::dynamic_tasks, this, args.size));
+        }
     }
 
     /** Synchronize threads by joining them */
-    for (int i = 0; i < THREADS; i++) {
+    for (int i = 0; i < args.threads; i++) {
         cout << "Waiting for threads to finish!" << endl;
         threads[i].join();
     }
     cout << "Done!" << endl;
 }
 
-void static_lb::assignment(int n, int queue_size) {
+void load_balance::static_tasks(int n, int queue_size) {
     /** Lock struct containing queue */
     queue_global.m.lock();
 
     if (queue_global.prime_queue.size() != 0) {
-        int counter = 0;
         int *array = new int [queue_size];
         for (int i = 0; i < queue_size; i++) {
             /** Acquire task from front of queue */
@@ -46,7 +52,6 @@ void static_lb::assignment(int n, int queue_size) {
             
             /** Pop front of queue */
             queue_global.prime_queue.pop();
-            counter++;
         }
         
         /** Unlock struct containing queue */
@@ -56,11 +61,30 @@ void static_lb::assignment(int n, int queue_size) {
         // int *array = new int [queue_size]; 
 
         /** Calculate prime numbers asynchronously */
-        calculate(array, queue_size); 
+        calculate_static(array, queue_size); 
     }
 }
 
-void static_lb::calculate(int *array, int array_size) { 
+void load_balance::dynamic_tasks(int n) {
+    /** Lock struct containing queue */
+    queue_global.m.lock();
+
+    if (queue_global.prime_queue.size() != 0) {
+        /** Acquire task from front of queue */
+        int task = queue_global.prime_queue.front(); 
+        
+        /** Pop front of queue */
+        queue_global.prime_queue.pop();
+    }
+        
+    /** Unlock struct containing queue */
+    queue_global.m.unlock();
+
+    /** Calculate prime numbers asynchronously */
+    calculate_dynamic(n); 
+}
+
+void load_balance::calculate_static(int *array, int array_size) { 
     /** Starting position for array */
     int starting = array[0];
 
@@ -75,17 +99,37 @@ void static_lb::calculate(int *array, int array_size) {
         for (size_t j = 2; j <= i / 2; j++) {
             if (i % j == 0) {
                 flag = 0;
-                // cout << "NOT prime: " << i << endl;
                 break;
             }
         }
         if (flag == 1) {
-            // cout << "prime: " << i << endl;
+            cout << "prime: " << i << endl;
         }
     }
 }
 
-void static_lb::print_queue() {
+void load_balance::calculate_dynamic(int n) { 
+    /** Flag indicating whether number is prime */
+    int flag;
+    
+    for (size_t i = atomic_int; i < atomic_int + 1; i++) {
+        if (i == 1 || i == 0) {
+            continue;
+        }
+        flag = 1;
+        for (size_t j = 2; j <= i / 2; j++) {
+            if (i % j == 0) {
+                flag = 0;
+                break;
+            }
+        }
+        if (flag == 1) {
+            cout << "prime: " << i << endl;
+        }
+    }
+}
+
+void load_balance::print_queue() {
     while(!queue_global.prime_queue.empty()){
 		cout << " " << queue_global.prime_queue.front() << endl;
 		queue_global.prime_queue.pop();

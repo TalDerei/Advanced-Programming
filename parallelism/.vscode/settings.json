@@ -68,6 +68,7 @@
         "map": "cpp",
         "numeric": "cpp",
         "random": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "cassert": "cpp"
     }
 }

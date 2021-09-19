@@ -16,44 +16,35 @@
  * approaches perform similarly.  But for N = 10ˆ6 and 10ˆ9, it is possible 
  * to get a HUGE speedup and the differences between approaches should arise.
  * 
- * Primes: 1009 (10^3), 1000003 (10^6), 1000000007 (10^9)
+ * Primes: 1009 (10^3), 1000003 (10^6), 10000019 (10^7)
  */
 
-#include <iostream>
-#include <unistd.h>
 #include <chrono>
 #include <mutex>
 #include <cassert>
-#include <string>
 
+#include "config_t.h"
+#include "sequential.h"
 #include "tbb.h"
-#include "static_lb.h"
+#include "load_balance.h"
 
 using namespace std;
 
-/**
- * arg_t args struct for CLI parameters
- */
-struct arg_t {
-    /** Prime number size */
-    int prime_size = 0;
-
-    /** Parallelization method */
-    string method = "";
-};
-
 void parse_args(int argc, char **argv, arg_t &args) {
     long opt;
-    while ((opt = getopt(argc, argv, "a:b:c")) != -1) {
+    while ((opt = getopt(argc, argv, "a:b:c:d")) != -1) {
         switch (opt) {
             case 'a':
-                args.method = std::string(optarg);
+                args.method = string(optarg);
                 break;
             case 'b':
-                args.prime_size = atoi(optarg);
+                args.size = atoi(optarg);
+                break;
+            case 'c':
+                args.threads = atoi(optarg);
                 break;
             default:
-                std::cout << "One or more parameters invalid! Try again!";
+                cout << "One or more parameters invalid! Try again!";
                 break;
         }
     }
@@ -65,21 +56,24 @@ int main(int argc, char **argv) {
     parse_args(argc, argv, args);
 
     /** Static and dynamic balancing objects */
-    static_lb s;
+    load_balance lb;
 
     /** Start execution time */
     std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
 
     //  s.static_balancing(args.prime_size);
      
-    if (args.method == "tbb") {
-        tbb_lib(args.prime_size);
-    } else if (args.method == "static") {
-        s.static_balancing(args.prime_size);
+    if (args.method == "sequential") {
+        sequential(args);
     }
-    // else if (args.method == "dynamic") {
-    //     d.dynamic_balancing(args.prime_size);
-    // }
+    else if (args.method == "tbb") {
+        tbb_lib(args);
+    } else if (args.method == "static") {
+        lb.load_balancing(args);
+    }
+    else if (args.method == "dynamic") {
+        lb.load_balancing(args);
+    }
 
     /** Finish execution time */
     std::chrono::time_point<std::chrono::high_resolution_clock> finish = std::chrono::high_resolution_clock::now();
@@ -87,6 +81,7 @@ int main(int argc, char **argv) {
     /** Duration represents time interval */
     std::chrono::duration<double> elapse_time = finish - start;
 
+    /** Print exeuction time to console */
     std::cout << "Execution time elapsed is: " << elapse_time.count() << std::endl;
     
     return 0;
