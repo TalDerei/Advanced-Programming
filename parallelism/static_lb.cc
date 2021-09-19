@@ -2,25 +2,26 @@
 
 void static_lb::static_balancing(int n) {
     /** Initialize the queue */
-    init_queue(n);
-    
+    const int queue_size = init_queue(n);
+
     /** Spawn threads */
-    spawn_threads(n);
+    spawn_threads(n, queue_size);
 }
 
-void static_lb::init_queue(int n) {
-    for (int i = 0; i <= n / 2; ++i) {
+int static_lb::init_queue(int n) {
+    for (int i = 0; i <= n; ++i) {
         queue_global.prime_queue.push(i);
     }
+    return (int) (queue_global.prime_queue.size() / THREADS);    
 }
 
-void static_lb::spawn_threads(int n) { 
+void static_lb::spawn_threads(int n, int queue_size) { 
     /** Vector of threads */
     std::vector<std::thread> threads;
 
     /** Spawn thread and insert into vector */
     for (int i = 0; i < THREADS; i++) {
-        threads.push_back(std::thread(&static_lb::tasks, this, n));
+        threads.push_back(std::thread(&static_lb::assignment, this, n, queue_size));
     }
 
     /** Synchronize threads by joining them */
@@ -31,88 +32,57 @@ void static_lb::spawn_threads(int n) {
     cout << "Done!" << endl;
 }
 
-void static_lb::tasks(int n) {
-    cout << "entered tasks!" << endl;
-    const int increment = queue_global.prime_queue.size() / THREADS;
-    
+void static_lb::assignment(int n, int queue_size) {
+    /** Lock struct containing queue */
+    queue_global.m.lock();
 
-
-        queue_global.m.lock();
-        if (queue_global.prime_queue.size() != 0) {
-            int * arr = new int [increment];
-            int counter = 0;
-            // cout << "????????????????? increment is: " << increment << endl;
-            for (int i = 0; i < increment; i++) {
-
-
-            
-            // cout << ":)))))))" << endl;
-            // if (queue_global.prime_queue.size() == 0) {
-            //     cout << "oh no ;<<<<<<<<<<<<<<<<<<<<<<<<<<" << endl;
-            //     return 0;
-            // } else {
-            /** Lock the struct containing the queue and mutex lock */
-
-            // cout << "entered while!" << endl;
-
-
-            std::thread::id this_id = std::this_thread::get_id();
-
-            // cout << "thread accessing the shared queue is: " << this_id << endl;
-
-            // cout << "queue size is: " << queue_global.prime_queue.size() << endl;
-
+    if (queue_global.prime_queue.size() != 0) {
+        int counter = 0;
+        int *array = new int [queue_size];
+        for (int i = 0; i < queue_size; i++) {
             /** Acquire task from front of queue */
-            int task = queue_global.prime_queue.front();
-            arr[i] = task;
+            int task = queue_global.prime_queue.front(); 
+            array[i] = task;
             
-            // cout << "task is: " << task << endl;
-
             /** Pop front of queue */
             queue_global.prime_queue.pop();
             counter++;
-            // cout << "!!!!!!!!!!!!!!!!" << endl;
-            }
-
-            // cout << "counter is: " << counter << endl;
-            
-            /** Unlock struct */
-            queue_global.m.unlock();
-
-            // cout << "arry contains: " << endl;
-            // for (int i = 0; i < increment; i++) {
-            //     cout << "num is: " << arr[i] << endl;
-            // }
-
-            /** Calculate primes */
-            do_work(arr, increment); 
         }
+        
+        /** Unlock struct containing queue */
+        queue_global.m.unlock();
+
+        /** RATHER THAN QUEUE, CAN JUST PARTITION THE ARRAY ITSELF */
+        // int *array = new int [queue_size]; 
+
+        /** Calculate prime numbers asynchronously */
+        calculate(array, queue_size); 
+    }
 }
 
-void static_lb::do_work(int *n, int increment) { 
-    int counter = 0;
-    // cout << "entered do_work ???????????????????" << endl;
-    // for (int i = 0; i < increment; i++) {
-    //     cout << "n[i] is: " << n[i] << endl;
-    // }
-    bool isPrime = true;
+void static_lb::calculate(int *array, int array_size) { 
+    /** Starting position for array */
+    int starting = array[0];
 
-    /** 0 and 1 are not prime numbers */
-\
-    for (size_t i = 2; i <= increment; ++i) {
-        if (n[i] % i == 0) {
-            isPrime = false;
-            break;
+    /** Flag indicating whether number is prime */
+    int flag;
+    
+    for (size_t i = starting; i < starting + array_size; i++) {
+        if (i == 1 || i == 0) {
+            continue;
+        }
+        flag = 1;
+        for (size_t j = 2; j <= i / 2; j++) {
+            if (i % j == 0) {
+                flag = 0;
+                // cout << "NOT prime: " << i << endl;
+                break;
+            }
+        }
+        if (flag == 1) {
+            // cout << "prime: " << i << endl;
         }
     }
-
-    // cout << "counter is: " << counter << endl;
-
-    // if (isPrime) {
-    //     cout << "prime number!" << endl;
-    // } else {
-    //     cout << "not a prime number!" << endl;
-    // }
 }
 
 void static_lb::print_queue() {
@@ -124,6 +94,8 @@ void static_lb::print_queue() {
 
 
 /**
+ * ---------------- Q. Why queue?
+ * 
  * How to split up tasks?
  * Each worker has one int. Push work orders to queue.
  * Each thread retrirves one work order and executes do_work.
@@ -139,11 +111,11 @@ void static_lb::print_queue() {
  * To evenly split up the workload amongst threads in order
  * to avoid threads being idle. 
  * 
- * Bottleneck is the queue!!!!!!!!
+ * ----------------- Bottleneck is the queue!!!!!!!!
  * Only have one queue, and only one thread can access and lock the shared queue 
  * at a time.
  * 
- * Rather than having all 8 threads accessing the same shared queue, what if you had
+ * ---------------------- Rather than having all 8 threads accessing the same shared queue, what if you had
  * them accessing their own individual queue in parallel, with static partiioning
  * of the data before runtime?
  * 
@@ -154,4 +126,16 @@ void static_lb::print_queue() {
  * 
  * Need to understand algorithm, and then understand how the buffering system know's only top look at
  * the last element to determine primeness or not.
+ * 
+ * One thread might break, but the other's will continue to run in do_work
+ * 
+ * Ideas:
+ * - Static load balancing run as tbb::parallel_for
+ * - multiple queues and each buffer ocupies that queue
+ * - don't need queue, just partition an int
+ * - need to test against all possible primes
+ * 
+ * Need to check against all possible primes:
+ * means we need to do a double for loop to check if all numbers up to the number we're checking is prime or not...
+ * so we're pushing n rather than n / 2 into a queue, and doing a double for loop 
  */

@@ -19,7 +19,7 @@ tmp  := $(shell mkdir -p $(ODIR))
 # Basic compiler configuration and flags
 CXX      = g++
 CXXFLAGS = -MMD -ggdb -O3 -std=gnu++17 -m$(BITS)
-LDFLAGS	 = -m$(BITS) -lpthread
+LDFLAGS	 = -m$(BITS) -lpthread -ltbb
 
 # The basenames of the c++ files that this program uses
 CXXFILES = main static_lb

@@ -33,13 +33,13 @@ class static_lb {
 
         void static_balancing(int);
 
-        void init_queue(int);
+        int init_queue(int);
 
-        void spawn_threads(int);
+        void spawn_threads(int, int);
 
-        void tasks(int);
+        void assignment(int, int);
 
-        void do_work(int *, int);
+        void calculate(int *, int);
 
         void print_queue();
 };

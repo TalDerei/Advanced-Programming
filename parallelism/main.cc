@@ -15,6 +15,8 @@
  * Keep in mind that for small problems, it's likely that different 
  * approaches perform similarly.  But for N = 10ˆ6 and 10ˆ9, it is possible 
  * to get a HUGE speedup and the differences between approaches should arise.
+ * 
+ * Primes: 1009 (10^3), 1000003 (10^6), 1000000007 (10^9)
  */
 
 #include <iostream>
@@ -24,7 +26,7 @@
 #include <cassert>
 #include <string>
 
-// #include "tbb.h"
+#include "tbb.h"
 #include "static_lb.h"
 
 using namespace std;
@@ -68,13 +70,13 @@ int main(int argc, char **argv) {
     /** Start execution time */
     std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
 
-     s.static_balancing(args.prime_size);
+    //  s.static_balancing(args.prime_size);
      
-    // if (args.method == "tbb") {
-    //     tbb_lib(args.prime_size);
-    // } else if (args.method == "static") {
-    //     s.static_balancing(args.prime_size);
-    // }
+    if (args.method == "tbb") {
+        tbb_lib(args.prime_size);
+    } else if (args.method == "static") {
+        s.static_balancing(args.prime_size);
+    }
     // else if (args.method == "dynamic") {
     //     d.dynamic_balancing(args.prime_size);
     // }
