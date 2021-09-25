@@ -22,7 +22,7 @@ CXXFLAGS = -MMD -ggdb -O3 -std=gnu++17 -m$(BITS)
 LDFLAGS	 = -m$(BITS) -lpthread -ltbb
 
 # The basenames of the c++ files that this program uses
-CXXFILES = main load_balance
+CXXFILES = main static_lb dynamic_lb 
 
 # The executable we will build
 TARGET = $(ODIR)/main

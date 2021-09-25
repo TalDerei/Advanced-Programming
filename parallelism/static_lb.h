@@ -5,8 +5,8 @@
  * to implement multithreading functionality. 
  */
 
-#ifndef LB_DEF
-#define LB_DEF
+#ifndef STATIC_LB_DEF
+#define STATIC_LB_DEF
 
 #include <thread>
 #include <vector>
@@ -16,7 +16,7 @@
 
 using namespace std;
 
-class load_balance {
+class static_lb {
     struct queue_struct {
         /** Queue data structure */
         std::queue<int> prime_queue;
@@ -25,12 +25,9 @@ class load_balance {
         std::mutex m;
     }; queue_struct queue_global;
 
-    /** Global atomic int */
-    std::atomic<int> atomic_int = 0;
-
     public:
         /** The constructor is implicitely empty */
-        load_balance() {}
+        static_lb() {}
 
         /** Calls to initialize queue and spawn threads */
         void load_balancing(arg_t);
@@ -42,19 +39,13 @@ class load_balance {
         void spawn_threads(arg_t, int);
 
         /** Lock queue and assign thread with static partition of the queue */
-        void static_tasks(int, int);
-
-        /** Lock queue and assign thread with dynamic partition of the queue */
-        void dynamic_tasks(int);
+        void tasks(int);
 
         /** Prime number checker for range 1 to N */
-        void calculate_static(int *, int);
-
-        /** Prime number checker for range 1 to N */
-        void calculate_dynamic(int);
+        void calculate(int *, int);
 
         /** Print contents of the queue */
-        void print_queue();
+        void print();
 };
 
 #endif

@@ -16,7 +16,7 @@
  * approaches perform similarly.  But for N = 10ˆ6 and 10ˆ9, it is possible 
  * to get a HUGE speedup and the differences between approaches should arise.
  * 
- * Primes: 1009 (10^3), 1000003 (10^6), 10000019 (10^7)
+ * Tested against: 1009 (10^3), 1000003 (10^6), 10000019 (10^7)
  */
 
 #include <chrono>
@@ -26,13 +26,27 @@
 #include "config_t.h"
 #include "sequential.h"
 #include "tbb.h"
-#include "load_balance.h"
+#include "static_lb.h"
+#include "dynamic_lb.h"
 
 using namespace std;
 
+/** Print some helpful usage information */
+void usage() {
+  using std::cout;
+  cout << "Sequential, TBB, Static and Dynamic Load Balancing\n";
+  cout << "  Usage: [options]\n";
+  cout << "    -a <string> : method (sequential | tbb | static | dynamic)\n";
+  cout << "    -b <int> : input size (e.g. 1009 (10^3) | 1000003 (10^6) | 10000019 (10^7)) \n";
+  cout << "    -c <int> : number of TBB threads (default 1)\n";
+  cout << "    -h       : print this message\n";
+  exit(0);
+}
+
+/** Parse CLI arguments */
 void parse_args(int argc, char **argv, arg_t &args) {
     long opt;
-    while ((opt = getopt(argc, argv, "a:b:c:d")) != -1) {
+    while ((opt = getopt(argc, argv, "a:b:c:d:h")) != -1) {
         switch (opt) {
             case 'a':
                 args.method = string(optarg);
@@ -43,9 +57,12 @@ void parse_args(int argc, char **argv, arg_t &args) {
             case 'c':
                 args.threads = atoi(optarg);
                 break;
+            case 'h':
+                usage();
+                break;
             default:
                 cout << "One or more parameters invalid! Try again!";
-                break;
+                exit(0);
         }
     }
 }
@@ -56,23 +73,20 @@ int main(int argc, char **argv) {
     parse_args(argc, argv, args);
 
     /** Static and dynamic balancing objects */
-    load_balance lb;
+    static_lb slb;
+    dynamic_lb dls;
 
     /** Start execution time */
     std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
-
-    //  s.static_balancing(args.prime_size);
      
     if (args.method == "sequential") {
         sequential(args);
-    }
-    else if (args.method == "tbb") {
+    } else if (args.method == "tbb") {
         tbb_lib(args);
     } else if (args.method == "static") {
-        lb.load_balancing(args);
-    }
-    else if (args.method == "dynamic") {
-        lb.load_balancing(args);
+        slb.load_balancing(args);
+    } else if (args.method == "dynamic") {
+        dls.load_balancing(args);
     }
 
     /** Finish execution time */

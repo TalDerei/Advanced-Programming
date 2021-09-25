@@ -20,6 +20,9 @@ struct arg_t {
     
     /** Number of execution threads */
     int threads = 0;
+
+    /** Display help message */
+    bool usage = false;
 };
 
 #endif

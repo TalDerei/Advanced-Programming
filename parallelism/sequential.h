@@ -1,7 +1,10 @@
 /** 
  * Sequential Implementation
  * 
- * Code Referenced: https://www.geeksforgeeks.org/program-to-find-prime-numbers-between-given-interval/
+ * The sequential code below references: https://www.geeksforgeeks.org/program-to-find-prime-numbers-between-given-interval/
+ * 
+ * I referenced a known working code for my sequential baseline for "correctness", since there isn't many variations
+ * to calculating all known primes in a given range.  
  */
 
 #ifndef SEQUENTIAL_DEF
@@ -13,9 +16,8 @@
 using namespace std;
 
 void sequential(arg_t args) {
-    bool isPrime = true;
     int flag;
-    int counter;
+    int counter = 0;
 
     if (args.size == 0 || args.size == 1) {
         cout << "Neither prime nor composite!" << endl;
@@ -30,12 +32,12 @@ void sequential(arg_t args) {
                 }
             }
             if (flag == 1) {
-                cout << "Prime is: " << i << endl;
+                cout << i << " is prime" << endl;
                 counter++;
             }
         }
     }
-    cout << "counter is: " << counter;
+    cout << "Number of primes is: " << counter << endl;
 }
 
 #endif
