@@ -2,6 +2,7 @@
  * CSE 411
  * Fall 2021
  * Project #1 -- Part #2
+ * Tal Derei
  *
  * The purpose of this assignment is to make correct code run faster.  This file
  * (gauss.cc) file implements the O(n^3) Gaussian Elimination algorithm.  We are

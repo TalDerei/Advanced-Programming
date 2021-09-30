@@ -2,6 +2,7 @@
  * CSE 411
  * Fall 2021
  * Project #1 -- Part #1 
+ * Tal Derei
  *
  * The purpose of this part is to assess the efficiency of TBB. 
  * This file implements a naive O(n) prime checker for integers 1--N. 
